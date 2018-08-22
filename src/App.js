@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import {
-  KEYS, DIRS, BODY, FOOD,
+  KEYS, DIRS, BODY, FOOD, NUMROWS, NUMCOLS,
 } from './constants';
-import { getNextIndex, ifCollision, findPositionOfFood } from './helpers';
+import {
+  getNextIndex, ifCollision, feedFoodToTheSnake, moveSnakeOnTheBoard, genUpdateBoard,
+} from './helpers';
 
 class App extends Component {
   constructor(props) {
@@ -63,36 +65,23 @@ class App extends Component {
   }
 
   move = () => {
-    const { paused } = this.state;
+    const { paused, snake, board } = this.state;
     if (paused) {
       return;
     }
 
-    const {
-      snake, board, numRows = 20, numCols = 20,
-    } = this.state;
     let { growth, direction } = this.state;
 
-    const head = getNextIndex(snake[0], direction, numRows, numCols);
+    const newHead = getNextIndex(snake[0], direction);
 
-    if (ifCollision(snake, head)) {
+    if (ifCollision(snake, newHead)) {
       this.setState(() => ({ gameOver: true }));
       return;
     }
 
-    const needFood = board[head] === FOOD || snake.length === 1;
-
-    if (needFood) {
-      const positionOfFood = findPositionOfFood(board, numRows, numCols);
-      board[positionOfFood] = FOOD;
-      growth += 1;
-    } else {
-      growth = 0;
-      board[snake.pop()] = null;
-    }
-
-    snake.unshift(head);
-    board[head] = BODY;
+    const needFood = board[newHead] === FOOD || snake.length === 1;
+    growth = feedFoodToTheSnake(needFood, board, snake, growth);
+    moveSnakeOnTheBoard(newHead, snake, board);
 
     if (this.nextDirection) {
       direction = this.nextDirection;
@@ -119,26 +108,12 @@ class App extends Component {
 
 
   render() {
-    const cells = [];
-
-    const numRows = 20;
-    const numCols = 20;
     const cellSize = 30;
-    let unique = 0;
-    for (let row = 0; row < numRows; row += 1) {
-      for (let col = 0; col < numCols; col += 1) {
-        const { board } = this.state;
-        const code = board[numCols * row + col];
-        let type = code === BODY ? 'body' : null;
-        if (type === null) {
-          type = code === FOOD ? 'food' : null;
-        }
-        unique += 1;
-        cells.push(<div className={`${type}-cell`} key={`${unique}`} />);
-      }
-    }
+    const {
+      snake, gameOver, paused, board,
+    } = this.state;
+    const cells = genUpdateBoard(board);
 
-    const { snake, gameOver, paused } = this.state;
     const { length } = snake;
     return (
       <div className="snake-game">
@@ -156,8 +131,8 @@ class App extends Component {
           onFocus={this.resume}
           onKeyDown={this.handleKey}
           style={{
-            width: numCols * cellSize,
-            height: numRows * cellSize,
+            width: NUMCOLS * cellSize,
+            height: NUMROWS * cellSize,
           }}
         >
           {cells}
