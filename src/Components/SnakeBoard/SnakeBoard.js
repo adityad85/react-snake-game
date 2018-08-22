@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { NUMCOLS, NUMROWS, CELLSIZE } from '../constants';
+import { NUMCOLS, NUMROWS, CELLSIZE } from '../../constants';
 
 class SnakeBoard extends Component {
   render() {

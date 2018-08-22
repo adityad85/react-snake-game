@@ -6,9 +6,9 @@ import {
   getNextIndex, ifCollision, feedFoodToTheSnake, moveSnakeOnTheBoard, updateBoard, isValidDirection,
 } from './helpers';
 
-import SnakeBoard from './SnakeBoard';
-import SnakeControls from './SnakeControls';
-import SnakeLength from './SnakeLength';
+import SnakeBoard from './Components/SnakeBoard';
+import SnakeControls from './Components/SnakeControls';
+import SnakeLength from './Components/SnakeLength';
 
 class App extends Component {
   constructor(props) {
@@ -73,9 +73,7 @@ class App extends Component {
     if (paused) {
       return;
     }
-
     let { growth, direction } = this.state;
-
     const newHead = getNextIndex(snake[0], direction);
 
     if (ifCollision(snake, newHead)) {
@@ -110,7 +108,6 @@ class App extends Component {
 
 
   render() {
-    const cellSize = 30;
     const {
       snake, gameOver, paused, board,
     } = this.state;
@@ -128,7 +125,6 @@ class App extends Component {
           resume={this.resume}
           handleKey={this.handleKey}
           gameOver={gameOver}
-          cellSize={cellSize}
           cells={cells}
         />
         <SnakeControls
