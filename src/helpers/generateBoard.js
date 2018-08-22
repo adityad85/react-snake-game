@@ -4,7 +4,7 @@ import {
   BODY, FOOD, NUMROWS, NUMCOLS,
 } from '../constants';
 
-export const genUpdateBoard = (board) => {
+export const updateBoard = (board) => {
   const cells = [];
 
   let unique = 0;

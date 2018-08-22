@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import {
-  KEYS, DIRS, BODY, FOOD, NUMROWS, NUMCOLS,
+  KEYS, BODY, FOOD,
 } from './constants';
 import {
-  getNextIndex, ifCollision, feedFoodToTheSnake, moveSnakeOnTheBoard, genUpdateBoard,
+  getNextIndex, ifCollision, feedFoodToTheSnake, moveSnakeOnTheBoard, updateBoard, isValidDirection,
 } from './helpers';
+
+import SnakeBoard from './SnakeBoard';
+import SnakeControls from './SnakeControls';
+import SnakeLength from './SnakeLength';
 
 class App extends Component {
   constructor(props) {
@@ -97,11 +101,9 @@ class App extends Component {
 
   handleKey = (event) => {
     event.preventDefault();
-    const { tempDirection } = this.state;
+    const { prevDirection } = this.state;
     const direction = event.nativeEvent.keyCode;
-    const difference = Math.abs(tempDirection - direction);
-
-    if (DIRS[direction] && difference !== 0 && difference !== 2) {
+    if (isValidDirection(direction, prevDirection)) {
       this.nextDirection = direction;
     }
   }
@@ -112,35 +114,29 @@ class App extends Component {
     const {
       snake, gameOver, paused, board,
     } = this.state;
-    const cells = genUpdateBoard(board);
+    const cells = updateBoard(board);
 
     const { length } = snake;
     return (
       <div className="snake-game">
-        <h1 className="snake-score">
-          Length:
-          {' '}
-          {length}
-        </h1>
-        <div
-          ref={this.refBoard}
-          className={`snake-board${gameOver ? ' game-over' : ''}`}
-          tabIndex="0"
-          role="grid"
-          onBlur={this.pause}
-          onFocus={this.resume}
-          onKeyDown={this.handleKey}
-          style={{
-            width: NUMCOLS * cellSize,
-            height: NUMROWS * cellSize,
-          }}
-        >
-          {cells}
-        </div>
-        <div className="snake-controls">
-          {paused ? <button type="submit" onClick={this.resume}>Resume</button> : null}
-          {gameOver ? <button type="submit" onClick={this.reset}>New Game</button> : null}
-        </div>
+        <SnakeLength
+          length={length}
+        />
+        <SnakeBoard
+          reference={this.refBoard}
+          pause={this.pause}
+          resume={this.resume}
+          handleKey={this.handleKey}
+          gameOver={gameOver}
+          cellSize={cellSize}
+          cells={cells}
+        />
+        <SnakeControls
+          paused={paused}
+          gameOver={gameOver}
+          resume={this.resume}
+          reset={this.reset}
+        />
       </div>
     );
   }
