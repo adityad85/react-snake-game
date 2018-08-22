@@ -99,7 +99,7 @@ class App extends Component {
 
   handleKey = (event) => {
     event.preventDefault();
-    const { prevDirection } = this.state;
+    const { direction: prevDirection } = this.state;
     const direction = event.nativeEvent.keyCode;
     if (isValidDirection(direction, prevDirection)) {
       this.nextDirection = direction;
