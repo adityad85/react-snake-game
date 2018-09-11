@@ -1,10 +1,5 @@
-/* body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-} */
 body {
-  background-color: #ddd;
+  background-color: #78909C;
 }
 
 .snake-game {
@@ -61,8 +56,8 @@ body {
 }
 
 .body-cell {
-  background: #39c;
-  box-shadow: 0px 0px 5px #39c;
+  background: #673AB7;
+  box-shadow: 0px 0px 5px #673AB7;
 }
 
 .food-cell {
